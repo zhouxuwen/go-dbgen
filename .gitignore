@@ -17,4 +17,5 @@
 # vendor/
 
 /output/*
+.idea/*
 go-dbgen
