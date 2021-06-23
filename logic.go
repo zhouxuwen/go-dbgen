@@ -147,6 +147,7 @@ func (l *Logic) GetRoot() string {
 func (l *Logic) GenerateModelsEntity(req *EntityReq) (err error) {
 	l.l.Lock()
 	defer l.l.Unlock()
+	fmt.Printf(">>> Generate entity start\n")
 	var s string
 	s = fmt.Sprintf(`
 package %s
@@ -204,6 +205,9 @@ import (
 
 // GenerateGormCURDFile 生成gormCURD文件
 func (l *Logic) GenerateGormCURDFile(tableName, tableComment string, tableDesc []*TableDesc) (err error) {
+	l.l.Lock()
+	defer l.l.Unlock()
+	fmt.Printf(">>> Generate curd file start\n")
 	var (
 		allFields     = make([]string, 0)
 		fieldsList    = make([]*SqlFieldInfo, 0)

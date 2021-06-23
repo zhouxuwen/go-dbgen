@@ -1,7 +1,7 @@
 
 type {{.StructTableName}}Model struct {
 	DB *gorm.DB
-	TableName string
+	P  *{{.StructTableName}}
 }
 
 var (
@@ -19,8 +19,8 @@ func (s *{{.StructTableName}}Model) GetAllColumns() string {
 // New{{.StructTableName}}Model 新建Master2slaveModel对象
 func New{{.StructTableName}}Model(db *gorm.DB) *{{.StructTableName}}Model {
 	return &{{.StructTableName}}Model{
-		DB:        db,
-		TableName: "{{.TableName}}",
+		DB: db,
+		P:  &{{.StructTableName}}{},
 	}
 }
 
@@ -29,7 +29,7 @@ func (s *{{.StructTableName}}Model) Create(value {{.StructTableName}}) error {
 	if s.DB == nil {
 		return DBIsNilErr
 	}
-	if err := s.DB.Debug().Table(value.TableName()).Save(&value).Error; err != nil {
+	if err := s.DB.Debug().Table(s.P.TableName()).Save(&value).Error; err != nil {
 		return err
 	}
 	return nil
@@ -40,7 +40,7 @@ func (s *{{.StructTableName}}Model) Delete(deleteWhereMap map[string]interface{}
 	if s.DB == nil {
 		return DBIsNilErr
 	}
-	db := s.DB.Debug().Table(s.TableName)
+	db := s.DB.Debug().Table(s.P.TableName())
 	for key, value := range deleteWhereMap {
 		whereStr := fmt.Sprintf("%v = ?", key)
 		db = db.Where(whereStr, value)
@@ -56,7 +56,7 @@ func (s *{{.StructTableName}}Model) Update(updateMap map[string]interface{}, whe
 	if s.DB == nil {
 		return DBIsNilErr
 	}
-	db := s.DB.Debug().Table(s.TableName)
+	db := s.DB.Debug().Table(s.P.TableName())
 
 	for key, value := range whereMap {
 		whereStr := fmt.Sprintf("%v = ?", key)
@@ -75,7 +75,7 @@ func (s *{{.StructTableName}}Model) SelectAllColumns() ([]{{.StructTableName}}, 
 		return nil, DBIsNilErr
 	}
 	objs := make([]{{.StructTableName}}, 0)
-	if err := s.DB.Debug().Table(s.TableName).
+	if err := s.DB.Debug().Table(s.P.TableName()).
 		Select(s.GetAllColumns()).
 		Find(&objs).Error; err != nil {
 			return nil, err

@@ -310,7 +310,11 @@ func FormatField(field string, formats []string) string {
 	}
 	buf := bytes.Buffer{}
 	for key := range formats {
-		buf.WriteString(fmt.Sprintf(`%s:"%s" `, formats[key], field))
+		if formats[key] == "gorm" {
+			buf.WriteString(fmt.Sprintf(`%s:"column:%s" `, formats[key], field))
+		} else {
+			buf.WriteString(fmt.Sprintf(`%s:"%s" `, formats[key], field))
+		}
 	}
 	return "`" + strings.TrimRight(buf.String(), " ") + "`"
 }
